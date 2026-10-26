@@ -40,23 +40,25 @@ gap through the **unofficial Alexa API**, using the private endpoints the Alexa 
 |---|---|---|
 | 1. Get it from HACS | [![Open this repository in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=scyto&repository=ha-alexa-group-sync&category=integration) | HACS > ⋮ > **Custom repositories**, add `https://github.com/scyto/ha-alexa-group-sync` as an **Integration** |
 | 2. Download | **Download** in HACS, then restart HA | Same |
-| 3. Set it up | [![Add Alexa Group Sync to Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=alexa_area_sync) | **Settings > Devices & services > Add integration > Alexa Group Sync** |
+| 3. Set it up | [![Add Alexa Group Sync to Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=alexa_group_sync) | **Settings > Devices & services > Add integration > Alexa Group Sync** |
 
 Then pick your Alexa account. After installing or updating, reload the browser (F5) if menu or
 field labels show up blank.
 
-### Upgrading from Alexa Room Sync
+### Upgrading from an earlier name
 
-Versions before 0.15.0 were called Alexa Room Sync (domain `alexa_room_sync`). Home Assistant sees
-the renamed integration as a new one, so:
+This integration was called Alexa Room Sync (domain `alexa_room_sync`, before 0.15.0) and then
+Alexa Area Sync (`alexa_area_sync`, 0.15.0 to 0.18.x). Home Assistant sees each rename as a new
+integration, so:
 
 1. If the old one has *Sync automatically* on, turn it off (Configure > Settings).
 2. Update in HACS and restart, then **Add integration > Alexa Group Sync** with the same Alexa
    account. It copies the old integration's settings and its record of the Alexa groups it manages,
    so your existing groups carry on; nothing is recreated.
-3. Remove the old **Alexa Room Sync** entry. That doesn't change Alexa.
+3. Remove the old entry. That doesn't change Alexa. If HACS left the old folder
+   (`custom_components/alexa_area_sync` or `alexa_room_sync`), delete it and restart.
 
-Its actions are now `alexa_area_sync.*`, and its button, picker and sensor entity ids change, so
+Its actions are now `alexa_group_sync.*`, and its button, picker and sensor entity ids change, so
 update anything of yours that used the old ones.
 
 ## Using it
@@ -173,12 +175,12 @@ For scripts and automations. With more than one Alexa account set up, pass `conf
 
 | Action | Writes? | Notes |
 |---|---|---|
-| `alexa_area_sync.preview` | No | Plan and match details. Optional `area_id`. |
-| `alexa_area_sync.sync` | With `apply: true` and the confirmation | Full sync. |
-| `alexa_area_sync.sync_area` | With `apply: true` and the confirmation | One area. |
-| `alexa_area_sync.list_groups` | No | Lists the groups in your Alexa account and the devices in each. |
-| `alexa_area_sync.remove_managed_rooms` | With `confirm: true`, whatever the dry-run setting | Removes the groups it created or adopted (keeps devices you added yourself). |
-| `alexa_area_sync.dump_appliances`, `probe_endpoints` | No | Diagnostics. `dump_appliances` redacts Amazon ids and Echo serials but keeps device names. |
+| `alexa_group_sync.preview` | No | Plan and match details. Optional `area_id`. |
+| `alexa_group_sync.sync` | With `apply: true` and the confirmation | Full sync. |
+| `alexa_group_sync.sync_area` | With `apply: true` and the confirmation | One area. |
+| `alexa_group_sync.list_groups` | No | Lists the groups in your Alexa account and the devices in each. |
+| `alexa_group_sync.remove_managed_rooms` | With `confirm: true`, whatever the dry-run setting | Removes the groups it created or adopted (keeps devices you added yourself). |
+| `alexa_group_sync.dump_appliances`, `probe_endpoints` | No | Diagnostics. `dump_appliances` redacts Amazon ids and Echo serials but keeps device names. |
 
 ## How it works
 
@@ -194,7 +196,7 @@ For scripts and automations. With more than one Alexa account set up, pass `conf
   update (it sends Amazon's own group document back with the name and members changed), and
   `DELETE` to remove.
 - **Memory:** the managed groups and their members are kept in HA storage
-  (`.storage/alexa_area_sync.<entry>.rooms`).
+  (`.storage/alexa_group_sync.<entry>.rooms`).
 
 ## Naming tips
 
@@ -245,7 +247,7 @@ first.
 - **v0.16.0:** lists exposed devices Alexa doesn't have, and asks HA Cloud to resend them if they stay missing.
 - **v0.17.0:** safer removals (held until confirmed on a later sync, capped per run, never on adoption); a sync stops if HA's exposure settings can't be read; the managed-groups record is saved even after an error; the Alexa lists / to-do feature is removed; diagnostics redact Echo serials; actions register once at startup; the README is exact about what writes.
 - **v0.18.0:** setup says what's missing: no Alexa login integration, one that isn't signed in (with its state), a session that can't reach Alexa, or HA Cloud / exposure not set up.
-- **v0.18.1:** renamed to **Alexa Group Sync** (repo `ha-alexa-group-sync`). The domain stays `alexa_area_sync`, so this is a normal update: nothing to re-add, no entity ids change.
+- **v0.19.0:** renamed to **Alexa Group Sync**: domain `alexa_group_sync` (was `alexa_area_sync`), repo `ha-alexa-group-sync`. See [Upgrading from an earlier name](#upgrading-from-an-earlier-name).
 
 ## Credits & licence
 

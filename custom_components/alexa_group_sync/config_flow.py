@@ -117,7 +117,7 @@ class AlexaAreaSyncConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
                 placeholders["error"] = str(err)[:300]
         if user_input is not None and not errors:
-            # Renamed from alexa_room_sync: start with that entry's settings if it exists.
+            # Renamed (from alexa_area_sync or alexa_room_sync): start with that entry's settings.
             legacy = runner.legacy_entries(self.hass, email)
             options = dict(legacy[0].options) if legacy else {CONF_DRY_RUN: DEFAULT_DRY_RUN}
             return self.async_create_entry(

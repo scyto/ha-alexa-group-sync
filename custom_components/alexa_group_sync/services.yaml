@@ -10,7 +10,7 @@ preview:
       required: false
       selector:
         config_entry:
-          integration: alexa_area_sync
+          integration: alexa_group_sync
     area_id:
       name: Area
       description: Limit the preview to a single HA area (optional).
@@ -29,7 +29,7 @@ list_groups:
       required: false
       selector:
         config_entry:
-          integration: alexa_area_sync
+          integration: alexa_group_sync
 
 sync_area:
   name: Sync one area
@@ -44,7 +44,7 @@ sync_area:
       required: false
       selector:
         config_entry:
-          integration: alexa_area_sync
+          integration: alexa_group_sync
     area_id:
       name: Area
       description: The HA area to sync.
@@ -76,7 +76,7 @@ sync:
       required: false
       selector:
         config_entry:
-          integration: alexa_area_sync
+          integration: alexa_group_sync
     apply:
       name: Apply (write to Alexa)
       description: If true, actually make the changes (requires the options confirmation).
@@ -99,7 +99,7 @@ dump_appliances:
       required: false
       selector:
         config_entry:
-          integration: alexa_area_sync
+          integration: alexa_group_sync
     sample_count:
       name: Sample count
       description: How many full (redacted) appliance records to include.
@@ -121,7 +121,7 @@ probe_endpoints:
       required: false
       selector:
         config_entry:
-          integration: alexa_area_sync
+          integration: alexa_group_sync
 
 remove_managed_rooms:
   name: Remove the Alexa groups it manages (created or adopted)
@@ -136,7 +136,7 @@ remove_managed_rooms:
       required: false
       selector:
         config_entry:
-          integration: alexa_area_sync
+          integration: alexa_group_sync
     confirm:
       name: Confirm
       description: Must be true.

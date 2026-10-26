@@ -84,6 +84,12 @@ def _login_for_entry(hass: HomeAssistant, entry: ConfigEntry):
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up one Alexa account. The actions are registered once, in async_setup."""
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
+    # Titles made under an earlier name follow the rename; a custom title is kept.
+    for old_name in ("Alexa Area Sync (", "Alexa Room Sync ("):
+        if entry.title.startswith(old_name):
+            hass.config_entries.async_update_entry(
+                entry, title="Alexa Group Sync (" + entry.title[len(old_name):]
+            )
     await runner.import_legacy_rooms(hass, entry)
     if entry.options.get(CONF_AUTO_SYNC, DEFAULT_AUTO_SYNC):
         entry.async_on_unload(autosync.async_start(hass, entry))

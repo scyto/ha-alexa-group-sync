@@ -27,7 +27,7 @@ from .const import (
     CONF_RESEND_MISSING,
     DEFAULT_RESEND_MISSING,
     DOMAIN,
-    LEGACY_DOMAIN,
+    LEGACY_DOMAINS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -155,27 +155,29 @@ def _report_failure(hass: HomeAssistant, entry: ConfigEntry, scope: str, error: 
 
 
 def legacy_entries(hass: HomeAssistant, email: str | None) -> list[ConfigEntry]:
-    """Entries of the pre-0.15 ``alexa_room_sync`` domain for the same account."""
+    """Entries of this integration's earlier domains (alexa_area_sync, then
+    alexa_room_sync) for the same account, newest domain first."""
     return [
-        e for e in hass.config_entries.async_entries(LEGACY_DOMAIN)
+        e for domain in LEGACY_DOMAINS
+        for e in hass.config_entries.async_entries(domain)
         if email and str(e.data.get(CONF_EMAIL, "")).lower() == email.lower()
     ]
 
 
 async def import_legacy_rooms(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """First start after the rename: take over the Alexa groups the old
-    ``alexa_room_sync`` entry for this account managed, so nothing is recreated.
-    The old file is left alone; removing the old integration cleans it up."""
+    """First start after a rename: take over the Alexa groups the old entry for this
+    account managed, so nothing is recreated. The old file is left alone; removing
+    the old integration cleans it up."""
     store = _store(hass, entry)
     if await store.async_load() is not None:
         return
     for old in legacy_entries(hass, entry.data.get(CONF_EMAIL)):
-        data = await Store(hass, STORAGE_VERSION,
-                           f"{LEGACY_DOMAIN}.{old.entry_id}.rooms").async_load()
+        key = f"{old.domain}.{old.entry_id}.rooms"
+        data = await Store(hass, STORAGE_VERSION, key).async_load()
         if data and data.get("rooms"):
             await store.async_save({"rooms": dict(data["rooms"])})
             _LOGGER.info("Imported %d managed Alexa group(s) from %s",
-                         len(data["rooms"]), LEGACY_DOMAIN)
+                         len(data["rooms"]), old.domain)
             return
 
 
