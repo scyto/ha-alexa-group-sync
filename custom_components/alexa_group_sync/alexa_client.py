@@ -183,7 +183,7 @@ async def _alexa_devices_request(
         base = URL(session.api._session_state_data.alexa_website_url)  # noqa: SLF001
     except AttributeError as err:
         raise AlexaClientError(
-            "This Alexa Devices version doesn't expose the HTTP session Alexa Area Sync "
+            "This Alexa Devices version doesn't expose the HTTP session Alexa Group Sync "
             f"borrows (needs Home Assistant 2025.12 or newer): {err}"
         ) from err
     # join, not joinpath: keeps a query string (?x=y) instead of percent-encoding it.

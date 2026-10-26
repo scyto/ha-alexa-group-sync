@@ -2,8 +2,8 @@
 
 from datetime import datetime, timedelta, timezone
 
-from alexa_area_sync import alexa_client as ac
-from alexa_area_sync import sync as s
+from alexa_group_sync import alexa_client as ac
+from alexa_group_sync import sync as s
 
 NOW = datetime(2026, 10, 23, 12, 0, tzinfo=timezone.utc)
 LIGHT = "SKILL_x_light#{}"

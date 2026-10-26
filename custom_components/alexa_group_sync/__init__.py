@@ -1,4 +1,4 @@
-"""Alexa Area Sync — mirror Home Assistant areas into Alexa rooms/groups.
+"""Alexa Group Sync — mirror Home Assistant areas into Alexa rooms/groups.
 
 Creates one Alexa group per HA area and assigns each Alexa-exposed HA device to the
 room matching its HA area, using the *unofficial* Alexa API (the private endpoints
@@ -63,11 +63,11 @@ def _target_entry(hass: HomeAssistant, call: ServiceCall) -> ConfigEntry:
         for e in entries:
             if e.entry_id == wanted:
                 return e
-        raise HomeAssistantError(f"No loaded Alexa Area Sync entry '{wanted}'.")
+        raise HomeAssistantError(f"No loaded Alexa Group Sync entry '{wanted}'.")
     if len(entries) == 1:
         return entries[0]
     if not entries:
-        raise HomeAssistantError("Alexa Area Sync isn't loaded.")
+        raise HomeAssistantError("Alexa Group Sync isn't loaded.")
     raise HomeAssistantError(
         "More than one Alexa account is set up; pass config_entry_id to choose one."
     )
@@ -84,6 +84,12 @@ def _login_for_entry(hass: HomeAssistant, entry: ConfigEntry):
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up one Alexa account. The actions are registered once, in async_setup."""
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
+    # Titles made under an earlier name follow the rename; a custom title is kept.
+    for old_name in ("Alexa Area Sync (", "Alexa Room Sync ("):
+        if entry.title.startswith(old_name):
+            hass.config_entries.async_update_entry(
+                entry, title="Alexa Group Sync (" + entry.title[len(old_name):]
+            )
     await runner.import_legacy_rooms(hass, entry)
     if entry.options.get(CONF_AUTO_SYNC, DEFAULT_AUTO_SYNC):
         entry.async_on_unload(autosync.async_start(hass, entry))
@@ -186,7 +192,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             apply = False
         if not apply:
             _LOGGER.warning(
-                "Alexa Area Sync is in DRY-RUN; nothing written. "
+                "Alexa Group Sync is in DRY-RUN; nothing written. "
                 "Set apply:true (with options confirmation) to write."
             )
         return await runner.run_sync(hass, entry, only_area_id=area_id, apply=apply)

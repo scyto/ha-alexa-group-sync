@@ -1,17 +1,18 @@
-"""Constants for the Alexa Area Sync integration."""
+"""Constants for the Alexa Group Sync integration."""
 
 from __future__ import annotations
 
-DOMAIN = "alexa_area_sync"
-# This integration's domain before v0.15.0; its saved records and settings are imported.
-LEGACY_DOMAIN = "alexa_room_sync"
+DOMAIN = "alexa_group_sync"
+# Earlier domains of this integration (newest first); their saved records and
+# settings are imported on first setup.
+LEGACY_DOMAINS = ("alexa_area_sync", "alexa_room_sync")
 
 # The integration this one piggy-backs on for an authenticated Alexa session.
 ALEXA_MEDIA_DOMAIN = "alexa_media"
 # HA's core Alexa Devices integration; preferred when it is signed in to the account.
 ALEXA_DEVICES_DOMAIN = "alexa_devices"
 
-# The Assist/Cloud exposure key we mirror. Alexa Area Sync only ever considers
+# The Assist/Cloud exposure key we mirror. Alexa Group Sync only ever considers
 # entities that are exposed to Amazon Alexa (via HA Cloud / Nabu Casa).
 ASSISTANT_ALEXA = "cloud.alexa"
 

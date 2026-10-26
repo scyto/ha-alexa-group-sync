@@ -21,6 +21,6 @@ for name in [
 ]:
     sys.modules.setdefault(name, MagicMock())
 
-pkg = types.ModuleType("alexa_area_sync")
-pkg.__path__ = [str(Path(__file__).parent.parent / "custom_components" / "alexa_area_sync")]
-sys.modules["alexa_area_sync"] = pkg
+pkg = types.ModuleType("alexa_group_sync")
+pkg.__path__ = [str(Path(__file__).parent.parent / "custom_components" / "alexa_group_sync")]
+sys.modules["alexa_group_sync"] = pkg

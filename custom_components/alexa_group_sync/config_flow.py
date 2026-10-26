@@ -1,4 +1,4 @@
-"""Config & options flow for Alexa Area Sync."""
+"""Config & options flow for Alexa Group Sync."""
 
 from __future__ import annotations
 
@@ -85,7 +85,7 @@ def _cloud_note(hass) -> str:
 
 
 class AlexaAreaSyncConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Alexa Area Sync."""
+    """Handle a config flow for Alexa Group Sync."""
 
     VERSION = 1
 
@@ -117,11 +117,11 @@ class AlexaAreaSyncConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
                 placeholders["error"] = str(err)[:300]
         if user_input is not None and not errors:
-            # Renamed from alexa_room_sync: start with that entry's settings if it exists.
+            # Renamed (from alexa_area_sync or alexa_room_sync): start with that entry's settings.
             legacy = runner.legacy_entries(self.hass, email)
             options = dict(legacy[0].options) if legacy else {CONF_DRY_RUN: DEFAULT_DRY_RUN}
             return self.async_create_entry(
-                title=f"Alexa Area Sync ({email})",
+                title=f"Alexa Group Sync ({email})",
                 data={CONF_EMAIL: email},
                 options=options,
             )
