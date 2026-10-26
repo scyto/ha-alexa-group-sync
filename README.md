@@ -1,4 +1,4 @@
-# Alexa Area Sync
+# Alexa Group Sync
 
 Keep your **Alexa groups** in step with your **Home Assistant areas**. There is one Alexa group per
 HA area, holding every Alexa-exposed HA device in that area, so "Alexa, turn off the kitchen
@@ -38,9 +38,9 @@ gap through the **unofficial Alexa API**, using the private endpoints the Alexa 
 
 | Step | With My Home Assistant | By hand |
 |---|---|---|
-| 1. Get it from HACS | [![Open this repository in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=scyto&repository=ha-alexa-area-sync&category=integration) | HACS > ⋮ > **Custom repositories**, add `https://github.com/scyto/ha-alexa-area-sync` as an **Integration** |
+| 1. Get it from HACS | [![Open this repository in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=scyto&repository=ha-alexa-group-sync&category=integration) | HACS > ⋮ > **Custom repositories**, add `https://github.com/scyto/ha-alexa-group-sync` as an **Integration** |
 | 2. Download | **Download** in HACS, then restart HA | Same |
-| 3. Set it up | [![Add Alexa Area Sync to Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=alexa_area_sync) | **Settings > Devices & services > Add integration > Alexa Area Sync** |
+| 3. Set it up | [![Add Alexa Group Sync to Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=alexa_area_sync) | **Settings > Devices & services > Add integration > Alexa Group Sync** |
 
 Then pick your Alexa account. After installing or updating, reload the browser (F5) if menu or
 field labels show up blank.
@@ -51,7 +51,7 @@ Versions before 0.15.0 were called Alexa Room Sync (domain `alexa_room_sync`). H
 the renamed integration as a new one, so:
 
 1. If the old one has *Sync automatically* on, turn it off (Configure > Settings).
-2. Update in HACS and restart, then **Add integration > Alexa Area Sync** with the same Alexa
+2. Update in HACS and restart, then **Add integration > Alexa Group Sync** with the same Alexa
    account. It copies the old integration's settings and its record of the Alexa groups it manages,
    so your existing groups carry on; nothing is recreated.
 3. Remove the old **Alexa Room Sync** entry. That doesn't change Alexa.
@@ -245,6 +245,7 @@ first.
 - **v0.16.0:** lists exposed devices Alexa doesn't have, and asks HA Cloud to resend them if they stay missing.
 - **v0.17.0:** safer removals (held until confirmed on a later sync, capped per run, never on adoption); a sync stops if HA's exposure settings can't be read; the managed-groups record is saved even after an error; the Alexa lists / to-do feature is removed; diagnostics redact Echo serials; actions register once at startup; the README is exact about what writes.
 - **v0.18.0:** setup says what's missing: no Alexa login integration, one that isn't signed in (with its state), a session that can't reach Alexa, or HA Cloud / exposure not set up.
+- **v0.18.1:** renamed to **Alexa Group Sync** (repo `ha-alexa-group-sync`). The domain stays `alexa_area_sync`, so this is a normal update: nothing to re-add, no entity ids change.
 
 ## Credits & licence
 

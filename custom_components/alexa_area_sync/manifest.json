@@ -1,6 +1,6 @@
 {
   "domain": "alexa_area_sync",
-  "name": "Alexa Area Sync",
+  "name": "Alexa Group Sync",
   "after_dependencies": [
     "alexa",
     "alexa_devices",
@@ -12,10 +12,10 @@
     "@scyto"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/scyto/ha-alexa-area-sync",
+  "documentation": "https://github.com/scyto/ha-alexa-group-sync",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/scyto/ha-alexa-area-sync/issues",
+  "issue_tracker": "https://github.com/scyto/ha-alexa-group-sync/issues",
   "requirements": [],
-  "version": "0.18.0"
+  "version": "0.18.1"
 }
