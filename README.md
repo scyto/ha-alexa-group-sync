@@ -250,6 +250,10 @@ first.
 - **v0.19.0:** renamed to **Alexa Group Sync**: domain `alexa_group_sync` (was `alexa_area_sync`), repo `ha-alexa-group-sync`. See [Upgrading from an earlier name](#upgrading-from-an-earlier-name).
 - **v0.19.1:** with Alexa Devices, an Echo you haven't given an area there uses its Alexa Media Player area, so switching sessions doesn't pull Echos out of their groups.
 
+## Contributing
+
+Branch from `dev` and open pull requests against `dev`. `dev` is merged to `main` for a release: bump `version` in `manifest.json` and add a changelog line, and merging to `main` tags and publishes the GitHub release automatically.
+
 ## Credits & licence
 
 MIT. Inspired by and originally forked from
