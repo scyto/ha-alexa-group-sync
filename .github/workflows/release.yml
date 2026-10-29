@@ -1,0 +1,47 @@
+name: Release
+
+# Publishes a GitHub release when the manifest version on main has no tag yet.
+# Work flows feature branch > dev > main; bumping "version" in manifest.json on
+# the way to main is what ships it.
+on:
+  push:
+    branches: [main]
+    paths:
+      - custom_components/alexa_group_sync/manifest.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Tag and release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        run: |
+          version=$(jq -r .version custom_components/alexa_group_sync/manifest.json)
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Release if new
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "$TAG is already released; nothing to do."
+            exit 0
+          fi
+          # Notes are this version's line in the README changelog, if there is one.
+          notes=$(grep -F -- "- **v$VERSION:**" README.md | sed "s/^- \*\*v$VERSION:\*\* *//" || true)
+          [ -n "$notes" ] || notes="See the [Changelog](https://github.com/$GITHUB_REPOSITORY#changelog)."
+          gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes "$notes" --latest
