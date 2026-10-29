@@ -19,6 +19,8 @@ jobs:
   release:
     name: Tag and release
     runs-on: ubuntu-latest
+    # A manual run can pick any branch; only main ever releases.
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
 
