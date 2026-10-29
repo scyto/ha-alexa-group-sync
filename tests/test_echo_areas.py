@@ -12,8 +12,10 @@ def _device(dev_id, serial, area_id=None):
 
 
 def _patch_registries(monkeypatch, devices):
-    monkeypatch.setattr(s.dr, "async_entries_for_config_entry", lambda reg, eid: devices)
-    monkeypatch.setattr(s.er, "async_entries_for_device", lambda reg, dev_id: [])
+    monkeypatch.setattr(s.dr, "async_entries_for_config_entry", lambda reg, eid: devices,
+                        raising=False)
+    monkeypatch.setattr(s.er, "async_entries_for_device", lambda reg, dev_id: [],
+                        raising=False)
 
 
 def test_alexa_devices_echo_without_area_uses_amp_area(monkeypatch):
