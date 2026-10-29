@@ -13,10 +13,8 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: release
-  cancel-in-progress: false
-
+# No shared concurrency group: GitHub keeps only one pending run per group, so
+# a queued version could be skipped. Each run releases its own commit's version.
 jobs:
   release:
     name: Tag and release
