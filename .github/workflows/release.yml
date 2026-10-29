@@ -42,4 +42,4 @@ jobs:
           # Notes are this version's line in the README changelog, if there is one.
           notes=$(grep -F -- "- **v$VERSION:**" README.md | sed "s/^- \*\*v$VERSION:\*\* *//" || true)
           [ -n "$notes" ] || notes="See the [Changelog](https://github.com/$GITHUB_REPOSITORY#changelog)."
-          gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes "$notes" --latest
+          gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes "$notes"
