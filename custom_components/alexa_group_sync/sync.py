@@ -206,12 +206,14 @@ def _echo_serials_by_area(
 
 
 def _alexa_devices_echos_by_area(
-    hass: HomeAssistant, entry_id: str
+    hass: HomeAssistant, entry_id: str, fallback: dict[str, str] | None = None
 ) -> dict[str, list[tuple[str, str]]]:
     """area_id -> [(entity_id, SERIAL)] for one core Alexa Devices account's Echos.
 
     Alexa Devices keys each Echo's HA device by its serial. The media player entity
-    names it in results; a device without one uses its device id.
+    names it in results; a device without one uses its device id. An Echo with no
+    area of its own takes the area from `fallback` (SERIAL -> area_id), so newly
+    added Alexa Devices Echos keep the rooms you gave them in Alexa Media Player.
     """
     ent_reg = er.async_get(hass)
     dev_reg = dr.async_get(hass)
@@ -235,11 +237,32 @@ def _alexa_devices_echos_by_area(
             _area_for_entity(hass, ent_reg, dev_reg, entity_id) if entity_id
             else device.area_id
         )
+        if not area_id and fallback:
+            area_id = fallback.get(serial.upper())
         if area_id:
             out.setdefault(area_id, []).append(
                 (entity_id or f"device:{device.id}", serial.upper())
             )
     return out
+
+
+def _echo_areas(
+    hass: HomeAssistant, email: str | None, alexa_devices_entry_id: str | None
+) -> dict[str, list[tuple[str, str]]]:
+    """area_id -> [(entity_id, SERIAL)] for the Echos of the session we're using.
+
+    Areas come from that integration, so an Echo placed differently in the two
+    never lands in two groups. With Alexa Devices, an Echo you haven't placed there
+    falls back to its Alexa Media Player area.
+    """
+    if not alexa_devices_entry_id:
+        return _echo_serials_by_area(hass, email)
+    amp_areas = {
+        serial.upper(): area_id
+        for area_id, echos in _echo_serials_by_area(hass, email).items()
+        for _, serial in echos
+    }
+    return _alexa_devices_echos_by_area(hass, alexa_devices_entry_id, amp_areas)
 
 
 def _add_echos(hass, options, appliances, rooms, ha_appliance_ids,
@@ -259,12 +282,7 @@ def _add_echos(hass, options, appliances, rooms, ha_appliance_ids,
         for serial in appliance.serials:
             by_serial.setdefault(serial.upper(), []).append(appliance.appliance_id)
     matched_areas: set[str] = set()
-    # Echo areas come from the integration whose session we're using, so an Echo
-    # placed differently in the two never lands in two groups.
-    echo_areas = (
-        _alexa_devices_echos_by_area(hass, alexa_devices_entry_id)
-        if alexa_devices_entry_id else _echo_serials_by_area(hass, email)
-    )
+    echo_areas = _echo_areas(hass, email, alexa_devices_entry_id)
     for area_id, echos in echo_areas.items():
         if any(by_serial.get(serial) for _, serial in echos):
             matched_areas.add(area_id)
@@ -367,8 +385,7 @@ def syncable_area_ids(
     if options.get(CONF_INCLUDE_ECHOS, DEFAULT_INCLUDE_ECHOS):
         session = ac.get_alexa_devices_session(hass, email)
         echo_areas = set(
-            _alexa_devices_echos_by_area(hass, session.entry_id) if session
-            else _echo_serials_by_area(hass, email)
+            _echo_areas(hass, email, session.entry_id if session else None)
         )
         if email in _MATCHED_ECHO_AREAS:
             # After a preview or sync, only areas whose Echo matched an Alexa device.

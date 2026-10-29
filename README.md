@@ -248,6 +248,7 @@ first.
 - **v0.17.0:** safer removals (held until confirmed on a later sync, capped per run, never on adoption); a sync stops if HA's exposure settings can't be read; the managed-groups record is saved even after an error; the Alexa lists / to-do feature is removed; diagnostics redact Echo serials; actions register once at startup; the README is exact about what writes.
 - **v0.18.0:** setup says what's missing: no Alexa login integration, one that isn't signed in (with its state), a session that can't reach Alexa, or HA Cloud / exposure not set up.
 - **v0.19.0:** renamed to **Alexa Group Sync**: domain `alexa_group_sync` (was `alexa_area_sync`), repo `ha-alexa-group-sync`. See [Upgrading from an earlier name](#upgrading-from-an-earlier-name).
+- **v0.19.1:** with Alexa Devices, an Echo you haven't given an area there uses its Alexa Media Player area, so switching sessions doesn't pull Echos out of their groups.
 
 ## Credits & licence
 
