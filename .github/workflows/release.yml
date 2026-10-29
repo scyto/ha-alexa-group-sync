@@ -27,9 +27,31 @@ jobs:
       - name: Read version
         id: version
         run: |
-          version=$(jq -r .version custom_components/alexa_group_sync/manifest.json)
+          version=$(jq -er .version custom_components/alexa_group_sync/manifest.json)
           echo "tag=v$version" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build notes
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          # This version's README changelog entry, including its wrapped lines.
+          python3 - <<'PY' > notes.md
+          import os
+          prefix = f"- **v{os.environ['VERSION']}:**"
+          lines = open("README.md", encoding="utf-8").read().splitlines()
+          entry = []
+          for line in lines:
+              if entry:
+                  if not line.strip() or not line[:1].isspace():
+                      break  # next bullet, blank line or heading ends the entry
+                  entry.append(line.strip())
+              elif line.startswith(prefix):
+                  entry.append(line[len(prefix):].strip())
+          repo = os.environ["GITHUB_REPOSITORY"]
+          print(" ".join(entry) or f"See the [Changelog](https://github.com/{repo}#changelog).")
+          PY
+          cat notes.md
 
       - name: Release if new
         env:
@@ -41,7 +63,12 @@ jobs:
             echo "$TAG is already released; nothing to do."
             exit 0
           fi
-          # Notes are this version's line in the README changelog, if there is one.
-          notes=$(grep -F -- "- **v$VERSION:**" README.md | sed "s/^- \*\*v$VERSION:\*\* *//" || true)
-          [ -n "$notes" ] || notes="See the [Changelog](https://github.com/$GITHUB_REPOSITORY#changelog)."
-          gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes "$notes"
+          flags=()
+          # A version with letters in it (0.20.0b1, 1.0.0rc1) is a pre-release.
+          [[ "$VERSION" =~ [a-zA-Z] ]] && flags+=(--prerelease)
+          if ! gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" \
+              --notes-file notes.md "${flags[@]}"; then
+            # Another run for the same version may have just released it.
+            gh release view "$TAG" >/dev/null 2>&1 || exit 1
+            echo "$TAG was released by another run."
+          fi
