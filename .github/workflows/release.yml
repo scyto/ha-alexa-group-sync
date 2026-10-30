@@ -35,11 +35,11 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          # This version's README changelog entry, including its wrapped lines.
+          # This version's CHANGELOG.md entry, including its wrapped lines.
           python3 - <<'PY' > notes.md
           import os
           prefix = f"- **v{os.environ['VERSION']}:**"
-          lines = open("README.md", encoding="utf-8").read().splitlines()
+          lines = open("CHANGELOG.md", encoding="utf-8").read().splitlines()
           entry = []
           for line in lines:
               if entry:
@@ -49,7 +49,7 @@ jobs:
               elif line.startswith(prefix):
                   entry.append(line[len(prefix):].strip())
           repo = os.environ["GITHUB_REPOSITORY"]
-          print(" ".join(entry) or f"See the [Changelog](https://github.com/{repo}#changelog).")
+          print(" ".join(entry) or f"See the [Changelog](https://github.com/{repo}/blob/main/CHANGELOG.md).")
           PY
           cat notes.md
 
